@@ -7,8 +7,9 @@ import Register from './components/register';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Profile from './components/profile';
-import Passwordreset from './components/passwordreset';
-import Passwordforgot from './components/passwordforgot';
+// import Passwordreset from './components/passwordreset';
+// import Passwordforgot from './components/passwordforgot';
+
 import {
   BrowserRouter as Router,
   Switch,

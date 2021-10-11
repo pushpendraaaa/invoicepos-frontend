@@ -117,7 +117,7 @@ class Profile extends Component {
 
   submitForm = async (formData) => {
     await axios
-      .put('http://localhost:8080/profile', formData)
+      .put(`${process.env.REACT_APP_API_URL}/profile`, formData)
       .then((res) => {
         console.log(res.data.result);
         if (res.data.result === 'success') {
