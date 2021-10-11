@@ -11,7 +11,7 @@ const LoginSchema = Yup.object().shape({
     .min(2, 'username is Too Short!')
     .max(50, 'username is Too Long!')
     .required('Username is Required'),
-  recaptcha: Yup.string().required(),
+  // recaptcha: Yup.string().required(),
   password: Yup.string().required('Password is required'),
 });
 
