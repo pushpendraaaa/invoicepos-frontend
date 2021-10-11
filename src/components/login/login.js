@@ -1,47 +1,59 @@
-import React, { Component } from "react";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
-import swal from "sweetalert";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+import swal from 'sweetalert';
+// import ReCaptcha from 'react-google-recaptcha';
+import { Link } from 'react-router-dom';
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
-    .min(2, "username is Too Short!")
-    .max(50, "username is Too Long!")
-    .required("Username is Required"),
-  password: Yup.string().required("Password is required")
+    .min(2, 'username is Too Short!')
+    .max(50, 'username is Too Long!')
+    .required('Username is Required'),
+  recaptcha: Yup.string().required(),
+  password: Yup.string().required('Password is required'),
 });
 
 class Login extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      alert: null
+      alert: null,
     };
   }
 
+  initilizeRecaptcha = (async) => {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  };
+
   componentDidMount() {
-    if (localStorage.getItem("TOKEN_KEY") != null) {
+    if (localStorage.getItem('TOKEN_KEY') != null) {
       return this.props.history.push('/dashboard');
     }
-    let notify = this.props.match.params["notify"]
-    if(notify !== undefined){
-      if(notify === 'error'){
-        swal("Activation Fail please try again !", '', "error")
-      }else if(notify === 'success'){
-        swal("Activation Success your can login !", '', "success")
+    let notify = this.props.match.params['notify'];
+    if (notify !== undefined) {
+      if (notify === 'error') {
+        swal('Activation Fail please try again !', '', 'error');
+      } else if (notify === 'success') {
+        swal('Activation Success your can login !', '', 'success');
       }
-     
     }
+    this.initilizeRecaptcha();
+  }
+
+  onChange(value) {
+    console.log('Captcha value:', value);
   }
 
   submitForm = (values, history) => {
-    console.log(process.env.REACT_APP_API_URL);
     axios
-      .post(`${process.env.REACT_APP_API_URL}login`, values)
+      .post(`${process.env.REACT_APP_API_URL}/login`, values)
       .then((res) => {
         if (res.data.result === 'success') {
           localStorage.setItem('TOKEN_KEY', res.data.token);
@@ -64,7 +76,7 @@ class Login extends Component {
     handleChange,
     handleSubmit,
     setFieldValue,
-    isSubmitting
+    isSubmitting,
   }) => {
     return (
       <form onSubmit={handleSubmit}>
@@ -78,8 +90,8 @@ class Login extends Component {
             placeholder="Username"
             className={
               errors.username && touched.username
-                ? "form-control is-invalid"
-                : "form-control"
+                ? 'form-control is-invalid'
+                : 'form-control'
             }
           />
           <div className="input-group-append">
@@ -103,8 +115,8 @@ class Login extends Component {
             placeholder="Password"
             className={
               errors.password && touched.password
-                ? "form-control is-invalid"
-                : "form-control"
+                ? 'form-control is-invalid'
+                : 'form-control'
             }
           />
           <div className="input-group-append">
@@ -118,11 +130,19 @@ class Login extends Component {
             </small>
           ) : null}
         </div>
+        {/* <div className="form-group">
+          <label>Recaptcha Validation</label>
+          <ReCaptcha
+            sitekey={`${process.env.REACT_APP_RECAPTCHA_KEY}`}
+            onChange={this.onChange}
+          />
+          {errors.recaptcha && touched.recaptcha && <p>{errors.recaptcha}</p>}
+        </div> */}
         <div className="row">
           <div className="col-8">
             <div className="icheck-primary">
               <input type="checkbox" id="remember" />
-              <label htmlFor="remember">Remember Me</label>
+              <label htmlFor="remember">&nbsp; Remember Me</label>
             </div>
           </div>
           <div className="col-4">
@@ -154,8 +174,8 @@ class Login extends Component {
 
               <Formik
                 initialValues={{
-                  username: "",
-                  password: ""
+                  username: '',
+                  password: '',
                 }}
                 onSubmit={(values, { setSubmitting }) => {
                   this.submitForm(values, this.props.history);
@@ -164,7 +184,7 @@ class Login extends Component {
                 validationSchema={LoginSchema}
               >
                 {/* {this.showForm()}            */}
-                {props => this.showForm(props)}
+                {(props) => this.showForm(props)}
               </Formik>
               <p className="mb-1">
                 <Link to="/password/forgot">I forgot my password</Link>
